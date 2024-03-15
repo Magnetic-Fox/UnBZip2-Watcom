@@ -189,8 +189,9 @@ Int32 indexIntoF(Int32, Int32*);
 void undoReversibleTransformation_small(UChar*);
 void undoReversibleTransformation_fast(UChar*);
 Bool uncompressStream(UChar*, UChar*);
-void initialize(void);
+Bool initialize(void);
 void freeAll(void);
+UInt32 uncompressData(UChar*, UChar*);
 
 #ifdef __cplusplus
     } /* extern "C" */

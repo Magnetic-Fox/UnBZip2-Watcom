@@ -1,4 +1,4 @@
-#include "smbzip2.h"
+#include "unbzip2.h"
 
 UInt32  bytesOut;
 Bool    smallMode;
@@ -1024,7 +1024,6 @@ void undoReversibleTransformation_small(UChar* dstBuffer) {
         code.
     --*/
     {
-        IntNative retVal;
         Int32     i2, count, chPrev, ch2;
         UInt32    localCrc;
 
@@ -1045,7 +1044,6 @@ void undoReversibleTransformation_small(UChar* dstBuffer) {
                 i2++;
    
                 dstBuffer[dstBufferPos++]=ch2;
-                retVal=6792;
    
                 UPDATE_CRC ( localCrc, (UChar)ch2 );
    
@@ -1064,7 +1062,6 @@ void undoReversibleTransformation_small(UChar* dstBuffer) {
                         }
                         for (j2 = 0;  j2 < (Int32)z;  j2++) {
                             dstBuffer[dstBufferPos++]=ch2;
-                            retVal=6792;
                             UPDATE_CRC ( localCrc, (UChar)ch2 );
                         }
                         i2++;
@@ -1126,7 +1123,6 @@ void undoReversibleTransformation_fast(UChar* dstBuffer) {
         Christian von Roques.
     --*/
     {
-        IntNative retVal;
         Int32     i2, count, chPrev, ch2;
         UInt32    localCrc;
 
@@ -1145,7 +1141,6 @@ void undoReversibleTransformation_fast(UChar* dstBuffer) {
                 i2++;
 
                 dstBuffer[dstBufferPos++]=ch2;
-                retVal=6792;
                 UPDATE_CRC ( localCrc, (UChar)ch2 );
    
                 if (ch2 != chPrev) {
@@ -1161,7 +1156,6 @@ void undoReversibleTransformation_fast(UChar* dstBuffer) {
                         z ^= RAND_MASK;
                         for (j2 = 0;  j2 < (Int32)z;  j2++) {
                             dstBuffer[dstBufferPos++]=ch2;
-                            retVal=6792;
                             UPDATE_CRC ( localCrc, (UChar)ch2 );
                         }
                         i2++;
@@ -1177,7 +1171,6 @@ void undoReversibleTransformation_fast(UChar* dstBuffer) {
                 i2++;
 
                 dstBuffer[dstBufferPos++]=ch2;
-                retVal=6792;
                 UPDATE_CRC ( localCrc, (UChar)ch2 );
    
                 if (ch2 != chPrev) {
@@ -1191,7 +1184,6 @@ void undoReversibleTransformation_fast(UChar* dstBuffer) {
                         GET_FAST(z);
                         for (j2 = 0;  j2 < (Int32)z;  j2++) {
                             dstBuffer[dstBufferPos++]=ch2;
-                            retVal=6792;
                             UPDATE_CRC ( localCrc, (UChar)ch2 );
                         }
                         i2++;
@@ -1237,7 +1229,7 @@ Bool uncompressStream(UChar *zStream, UChar *stream) {
 
     currBlockNo = 0;
 
-    while (True) {
+    while(True) {
         magic1 = bsGetUChar ();
         magic2 = bsGetUChar ();
         magic3 = bsGetUChar ();
@@ -1274,7 +1266,7 @@ Bool uncompressStream(UChar *zStream, UChar *stream) {
     return True;
 }
 
-void initialize(void) {
+Bool initialize(void) {
     UInt32 temp;
     
     ftab          = NULL;
@@ -1289,10 +1281,17 @@ void initialize(void) {
     bsStream      = NULL;
     workFactor    = 30;
 
+    srcBufferPos  = 0;
+    dstBufferPos  = 0;
+
     selector = (UChar*) halloc(MAX_SELECTORS, sizeof(UChar));
     selectorMtf = (UChar*) halloc(MAX_SELECTORS, sizeof(UChar));
     mtfFreq = (Int32*) halloc(MAX_ALPHA_SIZE, sizeof(Int32));
     minLens = (Int32*) halloc(N_GROUPS, sizeof(Int32));
+
+    if((selector==NULL) || (selectorMtf==NULL) || (mtfFreq==NULL) || (minLens==NULL)) {
+        return False;
+    }
 
     len = (UChar**) halloc(N_GROUPS, sizeof(UChar*));
     limit = (Int32**) halloc(N_GROUPS, sizeof(Int32*));
@@ -1300,6 +1299,11 @@ void initialize(void) {
     perm = (Int32**) halloc(N_GROUPS, sizeof(Int32*));
     code = (Int32**) halloc(N_GROUPS, sizeof(Int32*));
     rfreq = (Int32**) halloc(N_GROUPS, sizeof(Int32*));
+
+    if((len==NULL) || (limit==NULL) || (base==NULL) || (perm==NULL) || (code==NULL) || (rfreq==NULL)) {
+        return False;
+    }
+    
     for(temp=0; temp<N_GROUPS; ++temp) {
         len[temp]=(UChar*) halloc(MAX_ALPHA_SIZE, sizeof(UChar));
         limit[temp]=(Int32*) halloc(MAX_ALPHA_SIZE, sizeof(Int32));
@@ -1307,30 +1311,75 @@ void initialize(void) {
         perm[temp]=(Int32*) halloc(MAX_ALPHA_SIZE, sizeof(Int32));
         code[temp]=(Int32*) halloc(MAX_ALPHA_SIZE, sizeof(Int32));
         rfreq[temp]=(Int32*) halloc(MAX_ALPHA_SIZE, sizeof(Int32));
+        if((len[temp]==NULL) || (limit[temp]==NULL) || (base[temp]==NULL) || (perm[temp]==NULL) || (code[temp]==NULL) || (rfreq[temp]==NULL)) {
+            return False;
+        }
     }
     
-    return;
+    return True;
 }
 
 void freeAll(void) {
     UInt32 temp;
+    
     for(temp=0; temp<N_GROUPS; ++temp) {
-        hfree(len[temp]);
-        hfree(limit[temp]);
-        hfree(base[temp]);
-        hfree(perm[temp]);
-        hfree(code[temp]);
-        hfree(rfreq[temp]);
+        if(len[temp]!=NULL) {
+            hfree(len[temp]);
+        }
+        if(limit[temp]!=NULL) {
+            hfree(limit[temp]);
+        }
+        if(base[temp]!=NULL) {
+            hfree(base[temp]);
+        }
+        if(perm[temp]!=NULL) {
+            hfree(perm[temp]);
+        }
+        if(code[temp]!=NULL) {
+            hfree(code[temp]);
+        }
+        if(rfreq[temp]!=NULL) {
+            hfree(rfreq[temp]);
+        }
     }
-    hfree(len);
-    hfree(limit);
-    hfree(base);
-    hfree(perm);
-    hfree(code);
-    hfree(rfreq);
+    
+    if(len!=NULL) {
+        hfree(len);
+    }
+    if(limit!=NULL) {
+        hfree(limit);
+    }
+    if(base!=NULL) {
+        hfree(base);
+    }
+    if(perm!=NULL) {
+        hfree(perm);
+    }
+    if(code!=NULL) {
+        hfree(code);
+    }
+    if(rfreq!=NULL) {
+        hfree(rfreq);
+    }
 
-    hfree(selector);
-    hfree(selectorMtf);
-    hfree(mtfFreq);
-    hfree(minLens);
+    if(selector!=NULL) {
+        hfree(selector);
+    }
+    if(selectorMtf!=NULL) {
+        hfree(selectorMtf);
+    }
+    if(mtfFreq!=NULL) {
+        hfree(mtfFreq);
+    }
+    if(minLens!=NULL) {
+        hfree(minLens);
+    }
+}
+
+UInt32 uncompressData(UChar *input, UChar *output) {
+    if(initialize()) {
+        uncompressStream(input,output);
+    }
+    freeAll();
+    return dstBufferPos;
 }
