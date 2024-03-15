@@ -1,0 +1,2 @@
+Here is the original archive with BZip2 source code, version 0.1 from August 1997.
+I decided to provide it here for informational purposes as I'm not the author of the BZip2 compression/decompression tool.
