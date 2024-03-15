@@ -60,6 +60,9 @@
 #define bsNEEDR(nz) {                           \
     while (bsLive < nz) {                       \
         Int32 zzi = bsStream[srcBufferPos++];   \
+        if(srcBufferPos>=srcBufferMax) {        \
+            zzi=0;                              \
+        }                                       \
         bsBuff = (bsBuff << 8) | (zzi & 0xffL); \
         bsLive += 8;                            \
     }                                           \
@@ -191,7 +194,9 @@ void undoReversibleTransformation_fast(UChar*);
 Bool uncompressStream(UChar*, UChar*);
 Bool initialize(void);
 void freeAll(void);
-UInt32 uncompressData(UChar*, UChar*);
+void setSourceBufferSize(UInt32);
+void setDestinationBufferSize(UInt32);
+UInt32 uncompressData(UChar*, UInt32, UChar*, UInt32);
 
 #ifdef __cplusplus
     } /* extern "C" */
