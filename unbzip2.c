@@ -52,11 +52,11 @@ Int32   **rfreq;
 UInt32  bsBuff;
 Int32   bsLive;
 UChar*  bsStream;
-UInt32  srcBufferPos=0;
-UInt32  dstBufferPos=0;
+UInt32  srcBufferPos;
+UInt32  dstBufferPos;
 
-UInt32  srcBufferMax=0;
-UInt32  dstBufferMax=0;
+UInt32  srcBufferMax;
+UInt32  dstBufferMax;
 
 typedef struct {
         Int32 ll;
@@ -64,11 +64,13 @@ typedef struct {
         Int32 dd;
 } StackElem;
 
-Int32 incs[14] = { 1, 4, 13, 40, 121, 364, 1093, 3280,
-                   9841, 29524, 88573, 265720,
-                   797161, 2391484 };
+const Int32 incs[14] = {
+    1, 4, 13, 40, 121, 364, 1093, 3280,
+    9841, 29524, 88573, 265720,
+    797161, 2391484
+};
 
-Int32 rNums[512] = { 
+const Int32 rNums[512] = { 
     619, 720, 127, 481, 931, 816, 813, 233, 566, 247, 
     985, 724, 205, 454, 863, 491, 741, 242, 949, 214, 
     733, 859, 335, 708, 621, 574,  73, 654, 730, 472, 
@@ -123,7 +125,7 @@ Int32 rNums[512] = {
     936, 638
 };
 
-UInt32 crc32Table[256] = {
+const UInt32 crc32Table[256] = {
     0x00000000L, 0x04c11db7L, 0x09823b6eL, 0x0d4326d9L,
     0x130476dcL, 0x17c56b6bL, 0x1a864db2L, 0x1e475005L,
     0x2608edb8L, 0x22c9f00fL, 0x2f8ad6d6L, 0x2b4bcb61L,
