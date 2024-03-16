@@ -1420,3 +1420,19 @@ UInt32 uncompressData(UChar *input, UInt32 inputSize, UChar *output, UInt32 outp
     freeAll();
     return dstBufferPos;
 }
+
+UInt32 uncompressDataInPlace(UChar *buffer, UInt32 inputSize, UInt32 outputSize) {
+    UChar *tempBuffer=halloc(inputSize, sizeof(UChar));
+    UInt32 temp;
+    if(tempBuffer==NULL) {
+        return 0;
+    }
+    else {
+        for(temp=0; temp<inputSize; ++temp) {
+            tempBuffer[temp]=buffer[temp];
+        }
+        temp=uncompressData(tempBuffer,inputSize,buffer,outputSize);
+        hfree(tempBuffer);
+        return temp;
+    }
+}
