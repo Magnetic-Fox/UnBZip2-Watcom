@@ -1,3 +1,65 @@
+// Patched version of BZip2 v0.1, which now compiles under
+// Open Watcom for Win16 target. Original code has been remade
+// as a "ready to use" library for decompressing data arrays.
+
+// This (ugly) patched version by Magnetic-Fox, 16th March 2024.
+
+// IMPORTANT: THIS IS NOT AN ORIGINAL CODE OF BZIP2 NOR I'M
+// THE AUTHOR OF THIS WONDERFUL COMPRESSION/DECOMPRESSION TOOL!
+// FOR THE MOST TESTED AND ERROR FREE VERSION YOU SHOULD ALWAYS
+// USE OFFICIAL AND UP-TO-DATE VERSION OF BZIP2 CODE, WHICH CAN
+// BE FOUND HERE:
+
+// https://sourceware.org/bzip2/
+
+// Below is the part of the original comment from bzip2.c file,
+// version 0.1 from August 1997 to include information about
+// people, whose work was used to create this code.
+// There are also some occasional original comments in the code.
+
+// ORIGINAL COMMENT STARTS HERE
+/*-----------------------------------------------------------*/
+/*--- A block-sorting, lossless compressor        bzip2.c ---*/
+/*-----------------------------------------------------------*/
+
+/*--
+  This program is bzip2, a lossless, block-sorting data compressor,
+  version 0.1pl0, dated 17-Aug-1997.
+
+  Copyright (C) 1996, 1997 by Julian Seward.
+     Guildford, Surrey, UK
+     email: jseward@acm.org
+
+  This program is free software; you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation; either version 2 of the License, or
+  (at your option) any later version.
+
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+
+  You should have received a copy of the GNU General Public License
+  along with this program; if not, write to the Free Software
+  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+
+  The GNU General Public License is contained in the file LICENSE.
+
+  This program is based on (at least) the work of:
+     Mike Burrows
+     David Wheeler
+     Peter Fenwick
+     Alistair Moffat
+     Radford Neal
+     Ian H. Witten
+     Robert Sedgewick
+     Jon L. Bentley
+
+  For more information on these sources, see the file ALGORITHMS.
+--*/
+// ORIGINAL COMMENT ENDS HERE
+
 #include "unbzip2.h"
 
 UInt32  bytesOut;
@@ -1288,6 +1350,7 @@ Bool uncompressStream(UChar *zStream, UChar *stream) {
     return True;
 }
 
+// Okay, it's time for my code ;-)
 Bool initialize(void) {
     UInt32 temp;
     

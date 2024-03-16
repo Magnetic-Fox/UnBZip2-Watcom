@@ -1,3 +1,17 @@
+// Patched version of BZip2 v0.1, which now compiles under
+// Open Watcom for Win16 target. Original code has been remade
+// as a "ready to use" library for decompressing data arrays.
+
+// This (ugly) patched version by Magnetic-Fox, 16th March 2024.
+
+// IMPORTANT: THIS IS NOT AN ORIGINAL CODE OF BZIP2 NOR I'M
+// THE AUTHOR OF THIS WONDERFUL COMPRESSION/DECOMPRESSION TOOL!
+// FOR THE MOST TESTED AND ERROR FREE VERSION YOU SHOULD ALWAYS
+// USE OFFICIAL AND UP-TO-DATE VERSION OF BZIP2 CODE, WHICH CAN
+// BE FOUND HERE:
+
+// https://sourceware.org/bzip2/
+
 #ifndef UNBZIP2_H
 #define UNBZIP2_H
 
