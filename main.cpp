@@ -1,4 +1,5 @@
 // That's a very, very simple test code...
+// by Magnetic-Fox, 16th March 2024
 
 #include <iostream>
 #include "unbzip2.h"
