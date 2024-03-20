@@ -31,6 +31,8 @@ In fact, this project is heavily tied to Watcom coding style, so I think there m
 
 ## Disclaimer
 
+**At the moment this patch is only a beta version! There are still cases in which this code will end up with segmentation fault! Care must be taken when using this code!**
+
 I've made much effort to provide here working and checked codes with hope it will be useful.
 **However, these codes are provided here "AS IS", with absolutely no warranty! I take no responsibility for using them - DO IT ON YOUR OWN RISK!**
 
