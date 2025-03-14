@@ -15,6 +15,7 @@ void test(unsigned char *data, unsigned int size) {
         buffer[temp]=data[temp];
     }
     outSize=uncompressDataInPlace(buffer,size,65535);
+    std::cout << outSize << ' ' << (int)wasError() << std::endl;
     for(unsigned int x=0; x<outSize; ++x) {
         std::cout << buffer[x];
     }
