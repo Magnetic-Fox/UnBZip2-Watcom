@@ -212,6 +212,7 @@ void setSourceBufferSize(UInt32);
 void setDestinationBufferSize(UInt32);
 UInt32 uncompressData(UChar*, UInt32, UChar*, UInt32);
 UInt32 uncompressDataInPlace(UChar*, UInt32, UInt32);
+Bool wasError(void);
 
 #ifdef __cplusplus
     } /* extern "C" */

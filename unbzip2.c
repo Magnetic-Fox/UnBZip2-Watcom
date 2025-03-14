@@ -120,6 +120,8 @@ UInt32  dstBufferPos;
 UInt32  srcBufferMax;
 UInt32  dstBufferMax;
 
+static short int error;
+
 typedef struct {
         Int32 ll;
         Int32 hh;
@@ -424,12 +426,34 @@ void setDecompressStructureSizes(Int32 newSize100k) {
         Int32 n = 100000 * newSize100k;
         ll16    = halloc ( n, sizeof(UInt16) );
         ll4     = halloc ( ((n+1) >> 1), sizeof(UChar) );
+        if((ll16==NULL) || (ll4==NULL)) {
+            if(ll16==NULL) {
+                hfree(ll16);
+            }
+            if(ll4==NULL) {
+                hfree(ll4);
+            }
+            error=1;
+            return;
+        }
     }
     else {
         Int32 n = 100000 * newSize100k;
         ll8     = halloc ( n, sizeof(UChar) );
         tt      = halloc ( n, sizeof(Int32) );
+        if((ll8==NULL) || (tt==NULL)) {
+            if(ll8==NULL) {
+                hfree(ll8);
+            }
+            if(tt==NULL) {
+                hfree(tt);
+            }
+            error=1;
+            return;
+        }
     }
+    error=0;
+    return;
 }
 
 void makeMaps(void) {
@@ -1308,6 +1332,9 @@ Bool uncompressStream(UChar *zStream, UChar *stream) {
     }
 
     setDecompressStructureSizes ( magic4 - '0' );
+    if(error) {
+        return False;
+    }
     computedCombinedCRC = 0;
 
     currBlockNo = 0;
@@ -1360,7 +1387,7 @@ Bool initialize(void) {
     tt            = NULL;
     block         = NULL;
     zptr          = NULL;
-    smallMode     = False;
+    smallMode     = True;
     blockSize100k = 0;
     bsStream      = NULL;
     workFactor    = 30;
@@ -1461,6 +1488,21 @@ void freeAll(void) {
     if(minLens!=NULL) {
         hfree(minLens);
     }
+
+    if(ll16!=NULL) {
+        hfree(ll16);
+    }
+    if(ll4!=NULL) {
+        hfree(ll4);
+    }
+    if(ll8!=NULL) {
+        hfree(ll8);
+    }
+    if(tt!=NULL) {
+        hfree(tt);
+    }
+    
+    return;
 }
 
 void setSourceBufferSize(UInt32 size) {
@@ -1497,4 +1539,8 @@ UInt32 uncompressDataInPlace(UChar *buffer, UInt32 inputSize, UInt32 outputSize)
         hfree(tempBuffer);
         return temp;
     }
+}
+
+Bool wasError(void) {
+    return error==1;
 }
