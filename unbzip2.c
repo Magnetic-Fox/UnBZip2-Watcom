@@ -1376,7 +1376,7 @@ Bool uncompressStream(UChar *zStream, UChar *stream) {
     return True;
 }
 
-// Okay, it's time for my code ;-)
+// Okay, it's time for 100% my code ;-)
 Bool initialize(void) {
     UInt32 temp;
     
@@ -1387,7 +1387,7 @@ Bool initialize(void) {
     tt            = NULL;
     block         = NULL;
     zptr          = NULL;
-    smallMode     = True;
+    smallMode     = True; // as far as I can see, everything works much better using small mode
     blockSize100k = 0;
     bsStream      = NULL;
     workFactor    = 30;
